@@ -1,0 +1,177 @@
+package com.wdcloud.jyx.web.system.util;
+
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ * 文件名称： com.wdcloud.socia.commom.util.MapUtils.java</br>
+ * 初始作者： 叶青</br>
+ * 创建日期： 2016年6月29日</br>
+ * 功能说明： 这里用一句话描述这个类的作用--此句话需删除 <br/>
+ * =================================================<br/>
+ * 修改记录：<br/>
+ * 修改作者 日期 修改内容<br/>
+ * ================================================<br/>
+ * Copyright (c) 2010-2011 .All rights reserved.<br/>
+ */
+public class CommonUtils {
+
+	// @Autowired
+	// static SessionUserHolder sessionUserHolder;
+
+	/**
+	 * 方法描述: [将bean转为map.]</br>
+	 * 初始作者: 叶青<br/>
+	 * 创建日期: 2016年6月29日-下午7:51:08<br/>
+	 * 开始版本: 1.0.0<br/>
+	 * =================================================<br/>
+	 * 修改记录：<br/>
+	 * 修改作者 日期 修改内容<br/>
+	 * ================================================<br/>
+	 *
+	 * @param bean
+	 * @return
+	 * @throws IntrospectionException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 *             Map<String,String>
+	 */
+	public static Map<String, Object> beantoMap(Object bean) {
+
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		BeanInfo beanInfo;
+		try {
+			beanInfo = Introspector.getBeanInfo(bean.getClass());
+			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+			for (PropertyDescriptor descriptor : propertyDescriptors) {
+				String propertyName = descriptor.getName();
+				if (!propertyName.equals("class")) {
+					Method readMethod = descriptor.getReadMethod();
+					Object result = readMethod.invoke(bean, new Object[0]);
+					if (result != null) {
+						returnMap.put(propertyName, result);
+					} else {
+						returnMap.put(propertyName, "");
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnMap;
+	}
+
+	/**
+	 * 方法描述: [将bean转为map[不存放空值].]</br>
+	 * 初始作者: 叶青<br/>
+	 * 创建日期: 2016年6月29日-下午7:51:08<br/>
+	 * 开始版本: 1.0.0<br/>
+	 * =================================================<br/>
+	 * 修改记录：<br/>
+	 * 修改作者 日期 修改内容<br/>
+	 * ================================================<br/>
+	 *
+	 * @param bean
+	 * @return
+	 * @throws IntrospectionException
+	 * @throws IllegalAccessException
+	 * @throws InvocationTargetException
+	 *             Map<String,String>
+	 */
+	public static Map<String, Object> beantoMapFilterEmpty(Object bean) {
+
+		Map<String, Object> returnMap = new HashMap<String, Object>();
+		BeanInfo beanInfo;
+		try {
+			beanInfo = Introspector.getBeanInfo(bean.getClass());
+			PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
+			for (PropertyDescriptor descriptor : propertyDescriptors) {
+				String propertyName = descriptor.getName();
+				if (!propertyName.equals("class")) {
+					Method readMethod = descriptor.getReadMethod();
+					Object result = readMethod.invoke(bean, new Object[0]);
+					if (result != null) {
+						returnMap.put(propertyName, result.toString());
+					} else {
+						// 不存放空值
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return returnMap;
+	}
+
+	/**
+	 * 方法描述: 获取用户类型</br>
+	 * 初始作者: yinzhaomin<br/>
+	 * 创建日期: 2017年5月24日-下午5:35:49<br/>
+	 * 开始版本: 2.0.0<br/>
+	 * =================================================<br/>
+	 * 修改记录：<br/>
+	 * 修改作者 日期 修改内容<br/>
+	 * ================================================<br/>
+	 *
+	 * @param request
+	 * @return
+	 *         String
+	 */
+	public static String getUserType(HttpServletRequest request) {
+
+		// String userType = sessionUserHolder.getUserType(request);
+
+		// return userType;
+		return "01";
+	}
+
+	/**
+	 * 方法描述: 获取登录用户id</br>
+	 * 初始作者: yinzhaomin<br/>
+	 * 创建日期: 2017年5月24日-下午5:37:22<br/>
+	 * 开始版本: 2.0.0<br/>
+	 * =================================================<br/>
+	 * 修改记录：<br/>
+	 * 修改作者 日期 修改内容<br/>
+	 * ================================================<br/>
+	 *
+	 * @param request
+	 * @return
+	 *         String
+	 */
+	public static String getLoginId(HttpServletRequest request) {
+
+		// String loginId = sessionUserHolder.getLoginId(request);
+		// return loginId;
+		return "2000243990";
+	}
+
+	/**
+	 * 方法描述: 获取当前登录用户名</br>
+	 * 初始作者: yinzhaomin<br/>
+	 * 创建日期: 2017年5月24日-下午5:40:05<br/>
+	 * 开始版本: 2.0.0<br/>
+	 * =================================================<br/>
+	 * 修改记录：<br/>
+	 * 修改作者 日期 修改内容<br/>
+	 * ================================================<br/>
+	 *
+	 * @param request
+	 * @return
+	 *         String
+	 */
+	// public static String getUserName(HttpServletRequest request) {
+	//
+	// // String uname = sessionUserHolder.getUserName(request);
+	// // return uname;
+	// }
+
+}

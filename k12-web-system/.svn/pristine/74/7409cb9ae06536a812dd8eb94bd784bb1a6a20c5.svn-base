@@ -1,0 +1,13 @@
+################################################################################
+# \u4f1f\u4e1c\u4e91
+# \u7cfb\u7edf\u7ea7\u522b\u53c2\u6570\u8bbe\u7f6e
+################################################################################
+#
+########################################
+# \u914d\u7f6e\u4e2d\u5fc3\u8bbe\u7f6e
+#svn\u4e2d\u914d\u7f6e\u6587\u4ef6\u540d\u79f0{spring.cloud.config.name}-{spring.cloud.config.profile}.\u540e\u7f00
+########################################
+spring.cloud.config.name=${spring.application.name}
+spring.cloud.config.profile=dev
+spring.cloud.config.label=k12
+spring.cloud.config.uri = http://192.168.6.141:31000/conf/k12

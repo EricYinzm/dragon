@@ -1,0 +1,90 @@
+package com.wdcloud.jyx.web.system.controller;
+
+import java.util.Map;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.TestRestTemplate;
+import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.wdcloud.jyx.JyxWebApp;
+
+/**
+ * 文件名称： com.wdcloud.jyx.web.system.controller.CodeActionTest.java</br>
+ * 初始作者： xuetao</br>
+ * 创建日期： 2016年12月22日</br>
+ * 功能说明： 这里用一句话描述这个类的作用--此句话需删除 <br/>
+ * =================================================<br/>
+ * 修改记录：<br/>
+ * 修改作者 日期 修改内容<br/>
+ * ================================================<br/>
+ * Copyright (c) 2010-2011 .All rights reserved.<br/>
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringApplicationConfiguration(classes = JyxWebApp.class)
+@WebIntegrationTest
+@DirtiesContext
+public class CodeActionTest {
+
+	@Before
+	public void setUp() throws Exception {
+
+	}
+
+	@After
+	public void tearDown() throws Exception {
+
+	}
+
+	@Test
+	public void testGetCodeMapByCodeClassVersion() {
+
+		String params = "cvl={\"codeclass\":\"JSZTDM\"}";
+		TestRestTemplate restTemplate = new TestRestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		HttpEntity<String> formEntity = new HttpEntity<String>(JSON.toJSONString(params, new SerializerFeature[0]),
+				headers);
+		ResponseEntity<String> rs = restTemplate.postForEntity("http://localhost:8199/C001/codeclass",
+				formEntity,
+				String.class);
+		Assert.assertTrue("错误：接口不通", rs.getStatusCode().value() == HttpStatus.OK.value());
+
+		Assert.assertTrue("错误：接口内部报错",
+				JSON.parseObject(rs.getBody(), Map.class).get("isSuccess").equals("true"));
+	}
+
+	@Test
+	public void testGetCodeMap() {
+
+		String params = "cvl={\"codeclass\":\"JSZTDM\"}";
+		TestRestTemplate restTemplate = new TestRestTemplate();
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.add("Accept", MediaType.APPLICATION_JSON.toString());
+		HttpEntity<String> formEntity = new HttpEntity<String>(JSON.toJSONString(params, new SerializerFeature[0]),
+				headers);
+		ResponseEntity<String> rs = restTemplate.postForEntity("http://localhost:8199/C001/code",
+				formEntity,
+				String.class);
+		Assert.assertTrue("错误：接口不通", rs.getStatusCode().value() == HttpStatus.OK.value());
+
+		Assert.assertTrue("错误：接口内部报错",
+				JSON.parseObject(rs.getBody(), Map.class).get("isSuccess").equals("true"));
+	}
+
+}

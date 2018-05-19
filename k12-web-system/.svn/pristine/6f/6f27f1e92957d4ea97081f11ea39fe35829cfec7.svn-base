@@ -1,0 +1,165 @@
+package com.wdcloud.ueditor.extend.ueditor;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+import com.baidu.ueditor.define.ActionMap;
+
+public class UeditorConfigManager {
+
+	private final String		rootPath;
+	private JSONObject			jsonConfig			= null;
+	// 涂鸦上传filename定义
+	private final static String	SCRAWL_FILE_NAME	= "scrawl";
+	// 远程图片抓取filename定义
+	private final static String	REMOTE_FILE_NAME	= "remote";
+
+	private String				ueditor_config_json	= null;
+
+	private UeditorConfigManager(String rootPath, String ueditor_config_json) {
+
+		rootPath = rootPath.replace("\\", "/");
+
+		this.rootPath = rootPath;
+		this.ueditor_config_json = ueditor_config_json;
+
+		initEnv();
+
+	}
+
+	/**
+	 * 配置管理器构造工厂
+	 *
+	 * @param rootPath
+	 *            服务器根路径
+	 * @param contextPath
+	 *            服务器所在项目路径
+	 * @param uri
+	 *            当前访问的uri
+	 * @return 配置管理器实例或者null
+	 */
+	public static UeditorConfigManager getInstance(String rootPath, String ueditor_config_json) {
+
+		try {
+			return new UeditorConfigManager(rootPath, ueditor_config_json);
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+
+	// 验证配置文件加载是否正确
+	public boolean valid() {
+
+		return jsonConfig != null;
+	}
+
+	public JSONObject getAllConfig() {
+
+		return jsonConfig;
+
+	}
+
+	public Map<String, Object> getConfig(int type) {
+
+		Map<String, Object> conf = new HashMap<String, Object>();
+		String savePath = null;
+
+		switch (type) {
+
+			case ActionMap.UPLOAD_FILE:
+				conf.put("isBase64", "false");
+				conf.put("maxSize", jsonConfig.getLong("fileMaxSize"));
+				conf.put("allowFiles", getArray("fileAllowFiles"));
+				conf.put("fieldName", jsonConfig.getString("fileFieldName"));
+				savePath = jsonConfig.getString("filePathFormat");
+				break;
+
+			case ActionMap.UPLOAD_IMAGE:
+				conf.put("isBase64", "false");
+				conf.put("maxSize", jsonConfig.getLong("imageMaxSize"));
+				conf.put("allowFiles", getArray("imageAllowFiles"));
+				conf.put("fieldName", jsonConfig.getString("imageFieldName"));
+				savePath = jsonConfig.getString("imagePathFormat");
+				break;
+
+			case ActionMap.UPLOAD_VIDEO:
+				conf.put("maxSize", jsonConfig.getLong("videoMaxSize"));
+				conf.put("allowFiles", getArray("videoAllowFiles"));
+				conf.put("fieldName", jsonConfig.getString("videoFieldName"));
+				savePath = jsonConfig.getString("videoPathFormat");
+				break;
+
+			case ActionMap.UPLOAD_SCRAWL:
+				conf.put("filename", UeditorConfigManager.SCRAWL_FILE_NAME);
+				conf.put("maxSize", jsonConfig.getLong("scrawlMaxSize"));
+				conf.put("fieldName", jsonConfig.getString("scrawlFieldName"));
+				conf.put("isBase64", "true");
+				savePath = jsonConfig.getString("scrawlPathFormat");
+				break;
+
+			case ActionMap.CATCH_IMAGE:
+				conf.put("filename", UeditorConfigManager.REMOTE_FILE_NAME);
+				conf.put("filter", getArray("catcherLocalDomain"));
+				conf.put("maxSize", jsonConfig.getLong("catcherMaxSize"));
+				conf.put("allowFiles", getArray("catcherAllowFiles"));
+				conf.put("fieldName", jsonConfig.getString("catcherFieldName") + "[]");
+				savePath = jsonConfig.getString("catcherPathFormat");
+				break;
+
+			case ActionMap.LIST_IMAGE:
+				conf.put("allowFiles", getArray("imageManagerAllowFiles"));
+				conf.put("dir", jsonConfig.getString("imageManagerListPath"));
+				conf.put("count", jsonConfig.getInteger("imageManagerListSize"));
+				break;
+
+			case ActionMap.LIST_FILE:
+				conf.put("allowFiles", getArray("fileManagerAllowFiles"));
+				conf.put("dir", jsonConfig.getString("fileManagerListPath"));
+				conf.put("count", jsonConfig.getInteger("fileManagerListSize"));
+				break;
+
+		}
+
+		conf.put("savePath", savePath);
+		conf.put("rootPath", rootPath);
+
+		return conf;
+
+	}
+
+	private void initEnv() {
+
+		String configContent = filter(ueditor_config_json);
+
+		try {
+			JSONObject jsonConfig = JSON.parseObject(configContent);
+			this.jsonConfig = jsonConfig;
+		} catch (Exception e) {
+			jsonConfig = null;
+		}
+
+	}
+
+	private String[] getArray(String key) {
+
+		JSONArray jsonArray = jsonConfig.getJSONArray(key);
+		String[] result = new String[jsonArray.size()];
+
+		for (int i = 0, len = jsonArray.size(); i < len; i++) {
+			result[i] = jsonArray.getString(i);
+		}
+
+		return result;
+
+	}
+
+	private String filter(String input) {
+
+		return input.replaceAll("/\\*[\\s\\S]*?\\*/", "");
+
+	}
+}
